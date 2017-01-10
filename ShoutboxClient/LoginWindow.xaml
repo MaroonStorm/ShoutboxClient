@@ -8,14 +8,13 @@
         Title="Login" 
         Height="200" 
         Width="300" 
-        Activated="Window_Activated" 
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="NoResize" 
         Foreground="Black" 
         SizeToContent="WidthAndHeight" 
         FontFamily="Segoe UI Light" 
-        Background="WhiteSmoke">
+        Background="WhiteSmoke" Loaded="Window_Loaded">
     <Grid Background="#FF272727" Width="300">
         <TextBox x:Name="tUsername" HorizontalAlignment="Left" Height="20" Margin="10,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Background="{x:Null}" Text="Username" BorderBrush="#FF6E6E6E" Foreground="#FF7E7E7E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8"/>
         <Button x:Name="bLogin" Content="Login" HorizontalAlignment="Center" Margin="10,160,170,10" VerticalAlignment="Center" Width="120" Height="30" Click="bLogin_Click" Background="#FF999999" FontSize="15" Foreground="#FF252525" BorderBrush="{x:Null}"/>
@@ -28,5 +27,6 @@
         </PasswordBox>
         <Button x:Name="bExit" Content="Exit" HorizontalAlignment="Center" Margin="170,160,10,10" VerticalAlignment="Center" Width="120" Height="30" Background="#FF999999" FontSize="15" BorderBrush="{x:Null}" Foreground="#FF252525" Click="bExit_Click"/>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" Foreground="WhiteSmoke" Height="32" Width="72"><Run Text="Sign In"/><LineBreak/><Run/></TextBlock>
+        <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="47" Stroke="Black" VerticalAlignment="Top" Width="300" Opacity="0" MouseDown="Rectangle_MouseDown"/>
     </Grid>
 </Window>

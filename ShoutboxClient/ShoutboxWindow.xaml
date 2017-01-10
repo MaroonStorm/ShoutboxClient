@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ShoutboxClient"
         mc:Ignorable="d"
         Title="ShoutboxWindow" Height="300" Width="528.178" Closing="Window_Closing">
-    <Grid>
+    <Grid MinWidth="520" MinHeight="270">
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="269" VerticalAlignment="Top" Width="520" ClipToBounds="True">
             <TabItem Header="Shoutbox">
                 <Grid Background="#FFE5E5E5">

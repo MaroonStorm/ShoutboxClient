@@ -277,7 +277,6 @@ namespace ShoutboxClient
                             }
                         }
                     }
-                    //if(mText.ToLower().Contains("xenowarrior") || mText.ToLower().Contains("xeno") || mText.ToLower().Contains("xeno warrior") || mText.ToLower().Contains("ashley") || mText.ToLower().Contains("ashrey") || mText.ToLower().Contains("ash") || m.IsWhisper())
                 }
 
                 lastMessageId = m.GetID();
@@ -288,6 +287,7 @@ namespace ShoutboxClient
             debugWindow.Log("Done, last message ID is " + lastMessageId.ToString());
             lastMessageId = forumConnector.GetLastMessageID();
 
+            // TO-DO: FIX THIS THING WHICH SCROLLS CHAT TO BOTTOM ON NEW MESSAGE
             //int visibleItems = lbMessages.ClientSize.Height / lbMessages.ItemHeight;
             //lbMessages.TopIndex = Math.Max(lbMessages.Items.Count - visibleItems + 1, 0);
         }

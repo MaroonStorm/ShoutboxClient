@@ -37,7 +37,7 @@ namespace ShoutboxClient
             InitializeComponent();
         }
 
-        private void Window_Activated(object sender, EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             databaseManager.Connect("Master.db");
 
@@ -126,5 +126,11 @@ namespace ShoutboxClient
         {
             Application.Current.Shutdown();
         }
+
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
     }
 }
