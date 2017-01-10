@@ -121,5 +121,15 @@ namespace ShoutboxClient
             bLogin.Content = "Login";
             bLogin.IsEnabled = true;
         }
+
+        private void cbSaveUsername_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void tUsername_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
