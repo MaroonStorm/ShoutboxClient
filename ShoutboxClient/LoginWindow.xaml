@@ -1,0 +1,18 @@
+﻿<Window x:Class="ShoutboxClient.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShoutboxClient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="143.5" Width="390.667" Activated="Window_Activated">
+    <Grid>
+        <TextBox x:Name="tUsername" HorizontalAlignment="Left" Height="23" Margin="72,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="251"/>
+        <Button x:Name="bLogin" Content="Login" HorizontalAlignment="Center" Margin="10,66,10,11" VerticalAlignment="Center" Width="363" Height="36" Click="bLogin_Click"/>
+        <CheckBox x:Name="cbSaveUsername" Content="Save" HorizontalAlignment="Left" Margin="328,10,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="cbSavePassword" Content="Save" HorizontalAlignment="Left" Margin="328,38,0,0" VerticalAlignment="Top"/>
+        <PasswordBox x:Name="tPassword" HorizontalAlignment="Left" Margin="72,34,0,0" VerticalAlignment="Top" Width="251" Height="23"/>
+        <Label x:Name="label" Content="Username" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy" Content="Password" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
