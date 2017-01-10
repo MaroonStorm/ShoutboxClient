@@ -85,7 +85,7 @@ namespace ShoutboxClient
                                 databaseManager.Update("UPDATE UserSettings SET password = @userPass WHERE id = 1", new SQLiteParameter[] { new SQLiteParameter("userPass", (cbSavePassword.IsChecked.GetValueOrDefault() ? tPassword.Password : "")) });
 
                                 ShoutboxWindow sbWindow = new ShoutboxWindow();
-                                //sbWindow.Configure(forumConnector, debugWindow, databaseManager);
+                                sbWindow.Configure(forumConnector, debugWindow, databaseManager);
                                 sbWindow.Show();
 
                                 this.Hide();

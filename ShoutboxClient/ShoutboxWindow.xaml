@@ -5,8 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShoutboxClient"
         mc:Ignorable="d"
-        Title="ShoutboxWindow" Height="300" Width="300">
+        Title="ShoutboxWindow" Height="300" Width="528.178" Closing="Window_Closing">
     <Grid>
-        
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="269" VerticalAlignment="Top" Width="520" ClipToBounds="True">
+            <TabItem Header="Shoutbox">
+                <Grid Background="#FFE5E5E5">
+                    <TextBox x:Name="tbMessage" HorizontalAlignment="Left" Height="23" Margin="10,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="414" KeyDown="tbMessage_KeyDown"/>
+                    <Button x:Name="bSend" Content="Send" HorizontalAlignment="Left" Margin="429,208,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="bSend_Click"/>
+                    <ListBox x:Name="lbMessages" HorizontalAlignment="Left" Height="193" Margin="10,10,0,0" VerticalAlignment="Top" Width="494"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Notifications">
+                <Grid Background="#FFE5E5E5">
+                    <ListBox x:Name="lbNotifications" HorizontalAlignment="Left" Height="221" Margin="10,10,0,0" VerticalAlignment="Top" Width="494"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Members">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="lbUsers" HorizontalAlignment="Left" Height="221" Margin="10,10,0,0" VerticalAlignment="Top" Width="237"/>
+                    <ListBox x:Name="lbFollowed" Grid.Column="1" HorizontalAlignment="Left" Height="221" Margin="10,10,0,0" VerticalAlignment="Top" Width="237"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
     </Grid>
 </Window>
