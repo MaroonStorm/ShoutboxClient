@@ -337,5 +337,16 @@ namespace ShoutboxClient
         {
             Application.Current.Shutdown();
         }
+
+        private void bExit_Click(object sender, RoutedEventArgs e)
+        {
+
+            Application.Current.Shutdown();
+        }
+
+        private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
     }
 }

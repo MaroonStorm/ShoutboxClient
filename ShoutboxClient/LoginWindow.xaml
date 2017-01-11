@@ -14,8 +14,14 @@
         Foreground="Black" 
         SizeToContent="WidthAndHeight" 
         FontFamily="Segoe UI Light" 
-        Background="WhiteSmoke" Loaded="Window_Loaded">
+        Background="WhiteSmoke" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen">
     <Grid Background="#FF272727" Width="300">
+        <Border BorderBrush="#FFE8E8E8" BorderThickness="1" CornerRadius="0">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
+            </Border.Effect>
+        </Border>
         <TextBox x:Name="tUsername" HorizontalAlignment="Left" Height="20" Margin="10,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Background="{x:Null}" Text="Username" BorderBrush="#FF6E6E6E" Foreground="#FF7E7E7E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8"/>
         <Button x:Name="bLogin" Content="Login" HorizontalAlignment="Center" Margin="10,160,170,10" VerticalAlignment="Center" Width="120" Height="30" Click="bLogin_Click" Background="#FF999999" FontSize="15" Foreground="#FF252525" BorderBrush="{x:Null}"/>
         <CheckBox x:Name="cbSaveUsername" Content="Remember Username&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Foreground="#FFB8B8B8" Height="16" Width="131" RenderTransformOrigin="0,0.5" Background="#FF999999" BorderBrush="{x:Null}"/>
