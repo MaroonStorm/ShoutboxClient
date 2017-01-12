@@ -37,6 +37,8 @@ namespace ShoutboxClient
         private static DataTable queryData;
         private int lastMessageId = 0;
 
+        private bool waitForSend = false;
+
         DispatcherTimer messagesTimer = new DispatcherTimer();
 
         public ShoutboxWindow()
@@ -234,21 +236,27 @@ namespace ShoutboxClient
                 if (tbMessage.Text.StartsWith("#"))
                 {
                     ParseCommand(tbMessage.Text);
+                    tbMessage.Text = "";
+                    waitForSend = false;
+
+                    debugWindow.Log("Message command has been parsed.");
                 }
                 else
                 {
                     debugWindow.Log(await forumConnector.SendMessage(tbMessage.Text, messageColour, false));
-                    debugWindow.Log("Message has been sent.");
+                    tbMessage.Text = "";
+                    waitForSend = false;
 
-                    GetMessages();
+                    debugWindow.Log("Message has been sent.");
                 }
 
-                tbMessage.Text = "";
             }
             else
             {
                 debugWindow.Log("Message was not sent, empty message or too long.");
             }
+
+            GetMessages();
         }
 
         private async void GetMessages()
@@ -281,10 +289,12 @@ namespace ShoutboxClient
                         }
                     }
                 }
-                if(!lbMessages.Items.Contains("[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText))
+
+                string tmpMessage = "[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText;
+                if (!lbMessages.Items.Contains(tmpMessage))
                 {
-                    lbMessages.Items.Add("[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText);
-                    tbMessages.AppendText("\n[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText);
+                    lbMessages.Items.Add(tmpMessage);
+                    tbMessages.AppendText("\n" + tmpMessage);
                     debugWindow.Log("Added message: " + lastMessageId.ToString());
 
                     tbMessages.ScrollToEnd();
@@ -325,17 +335,22 @@ namespace ShoutboxClient
 
         private void tbMessage_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && !waitForSend)
             {
-                SendMessage(e);
-
+                waitForSend = true;
                 e.Handled = true;
+
+                SendMessage(e);
             }
         }
 
         private void bSend_Click(object sender, RoutedEventArgs e)
         {
-            SendMessage(null);
+            if(!waitForSend)
+            {
+                waitForSend = true;
+                SendMessage(null);
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
