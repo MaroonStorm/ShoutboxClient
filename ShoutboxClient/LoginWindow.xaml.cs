@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,24 +61,23 @@ namespace ShoutboxClient
             debugWindow.Log("Ready!");
         }
 
-        private void bLogin_Click(object sender, RoutedEventArgs e)
+        private async void bLogin_Click(object sender, RoutedEventArgs e)
         {
+            bLogin.Content = "Logging in...";
             bLogin.IsEnabled = false;
 
-            if (!forumConnector.GetUserData().IsLoggedIn())
+            if (!forumConnector.GetUserData().IsLoggedIn() && tUsername.Text != "" && tPassword.Password != "")
             {
-                if (tUsername.Text != "" && tPassword.Password != "")
+                try
                 {
-                    bLogin.Content = "Logging in...";
-
-                    try
+                    LoginState state = await forumConnector.Login(tUsername.Text, tPassword.Password, tTwoFactorAuth.Text);
+                    switch(state)
                     {
-                        if (forumConnector.Login(tUsername.Text, tPassword.Password))
-                        {
+                        case LoginState.STATE_SUCCESS:
                             debugWindow.Log("Connected as: " + forumConnector.GetUserData().GetUsername());
                             debugWindow.Log("Verifying login state...");
 
-                            if (forumConnector.VerifyLogin())
+                            if (await forumConnector.VerifyLogin())
                             {
                                 debugWindow.Log("Logged in.");
 
@@ -92,30 +92,28 @@ namespace ShoutboxClient
                             }
                             else
                             {
-                                MessageBox.Show("Could not login, either you use Two Factor Auth or your details are incorrect.");
+                                MessageBox.Show("Could not login, unable to verify login state.");
                                 debugWindow.Log("Could not login.");
                             }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Could not login, either you use Two Factor Auth or your details are incorrect.");
+                            break;
+                        case LoginState.STATE_FAILED:
+                            MessageBox.Show("Could not login, your details are incorrect or there is no connection to the internet.");
                             debugWindow.Log("Could not login.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        debugWindow.Log(ex.Message);
+                            break;
+                        case LoginState.STATE_2FA:
+                            MessageBox.Show("Two factor authentication required.");
+                            break;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Could not login, please fill in all fields.");
-                    debugWindow.Log("Please fill in all fields.");
+                    MessageBox.Show("An error has occured, check debug.log for more information.");
+                    debugWindow.Log(ex.Message);
                 }
             }
             else
             {
-                debugWindow.Log("You are logged in.");
+                debugWindow.Log("You are already logged in or fields are empty.");
             }
 
             bLogin.Content = "Login";

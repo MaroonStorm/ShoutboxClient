@@ -23,16 +23,17 @@
             </Border.Effect>
         </Border>
         <TextBox x:Name="tUsername" HorizontalAlignment="Left" Height="20" Margin="10,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Background="{x:Null}" Text="Username" BorderBrush="#FF6E6E6E" Foreground="#FF7E7E7E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8"/>
-        <Button x:Name="bLogin" Content="Login" HorizontalAlignment="Center" Margin="10,160,170,10" VerticalAlignment="Center" Width="120" Height="30" Click="bLogin_Click" Background="#FF999999" FontSize="15" Foreground="#FF252525" BorderBrush="{x:Null}"/>
+        <Button x:Name="bLogin" Content="Login" HorizontalAlignment="Center" Margin="10,164,170,6" VerticalAlignment="Center" Width="120" Height="30" Click="bLogin_Click" Background="#FF999999" FontSize="15" Foreground="#FF252525" BorderBrush="{x:Null}"/>
         <CheckBox x:Name="cbSaveUsername" Content="Remember Username&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Foreground="#FFB8B8B8" Height="16" Width="131" RenderTransformOrigin="0,0.5" Background="#FF999999" BorderBrush="{x:Null}"/>
-        <CheckBox x:Name="cbSavePassword" Content="Remember Password" HorizontalAlignment="Left" Margin="10,0,0,56" Foreground="#FFB8B8B8" VerticalAlignment="Bottom" Height="16" Width="131" Background="#FF999999" BorderBrush="{x:Null}"/>
-        <PasswordBox x:Name="tPassword" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" Width="280" Height="20" Background="{x:Null}" Password="Password" BorderBrush="#FF6E6E6E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8">
+        <CheckBox x:Name="cbSavePassword" Content="Remember Password" HorizontalAlignment="Left" Margin="10,0,0,66" Foreground="#FFB8B8B8" VerticalAlignment="Bottom" Height="16" Width="131" Background="#FF999999" BorderBrush="{x:Null}"/>
+        <PasswordBox x:Name="tPassword" HorizontalAlignment="Left" Margin="10,93,0,0" VerticalAlignment="Top" Width="280" Height="20" Background="{x:Null}" Password="Password" BorderBrush="#FF6E6E6E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8">
             <PasswordBox.Foreground>
                 <SolidColorBrush Color="#FF7E7E7E"/>
             </PasswordBox.Foreground>
         </PasswordBox>
-        <Button x:Name="bExit" Content="Exit" HorizontalAlignment="Center" Margin="170,160,10,10" VerticalAlignment="Center" Width="120" Height="30" Background="#FF999999" FontSize="15" BorderBrush="{x:Null}" Foreground="#FF252525" Click="bExit_Click"/>
+        <Button x:Name="bExit" Content="Exit" HorizontalAlignment="Center" Margin="170,164,10,6" VerticalAlignment="Center" Width="120" Height="30" Background="#FF999999" FontSize="15" BorderBrush="{x:Null}" Foreground="#FF252525" Click="bExit_Click"/>
         <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" Foreground="WhiteSmoke" Height="32" Width="72"><Run Text="Sign In"/><LineBreak/><Run/></TextBlock>
         <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="47" Stroke="Black" VerticalAlignment="Top" Width="300" Opacity="0" MouseDown="Rectangle_MouseDown"/>
+        <TextBox x:Name="tTwoFactorAuth" HorizontalAlignment="Left" Height="20" Margin="10,139,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Background="{x:Null}" Text="Two Step Code (Optional)" BorderBrush="#FF6E6E6E" Foreground="#FF7E7E7E" BorderThickness="0,0,0,2" FontSize="15" SelectionBrush="#FFE8E8E8"/>
     </Grid>
 </Window>

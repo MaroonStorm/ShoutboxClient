@@ -106,6 +106,7 @@
     <Compile Include="ShoutboxWindow.xaml.cs">
       <DependentUpon>ShoutboxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Source\Data\Enum\LoginState.cs" />
     <Compile Include="Source\Data\FormattedMessage.cs" />
     <Compile Include="Source\Data\ForumData.cs" />
     <Compile Include="Source\Data\Raw\PostData.cs" />

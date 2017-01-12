@@ -48,13 +48,13 @@ namespace ShoutboxClient
             InitializeComponent();
         }
 
-        public void Configure(ConnectionManager connector, DebugWindow debug, DatabaseManager database)
+        public async void Configure(ConnectionManager connector, DebugWindow debug, DatabaseManager database)
         {
             forumConnector = connector;
             debugWindow = debug;
             databaseManager = database;
 
-            debugWindow.Log(forumConnector.VerifyLogin() ? "Connected." : "Disconnected.");
+            debugWindow.Log(await forumConnector.VerifyLogin() ? "Connected." : "Disconnected.");
 
             queryData = databaseManager.Select("SELECT * FROM UserSettings WHERE 1 LIMIT 1;", null);
             if (queryData.Rows.Count > 0)
@@ -64,173 +64,180 @@ namespace ShoutboxClient
                 debugWindow.Log("Set message colour to: " + messageColour);
             }
 
-            lbMessages.Items.Add("Loading...");
-            lbUsers.Items.Add("Loading...");
+            GetMessages();
+            GetMembers();
+
+            lbNotifications.Items.Add("If you get any notifications, they will be displayed below.");
         }
 
-        private void SendMessage(KeyEventArgs e)
+        private void ParseCommand(string m)
+        {
+            if (m.StartsWith("#alert add "))
+            {
+                if (m.Split(' ')[2] != "")
+                {
+                    string final = "";
+                    string[] phrase = m.Split(' ');
+                    phrase[0] = "";
+                    phrase[1] = "";
+
+                    foreach (string item in phrase)
+                    {
+                        if (item != "")
+                        {
+                            final = final + item + " ";
+                        }
+                    }
+                    final = final.Trim();
+
+                    if (databaseManager.Select("SELECT * FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) }).Rows.Count > 0)
+                    {
+                        debugWindow.Log("Keyword [" + final + "] already exists in database.");
+                    }
+                    else
+                    {
+                        debugWindow.Log("Keyword [" + final + "] has been added.");
+                        databaseManager.Insert("INSERT INTO NotifyKeywords(value) VALUES(@keyWord)", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) });
+                    }
+                }
+                else
+                {
+                    debugWindow.Log("Keyword cannot be blank.");
+                }
+            }
+            else if (m.StartsWith("#alert del"))
+            {
+                if (m.Split(' ')[2] != "")
+                {
+                    string final = "";
+                    string[] phrase = m.Split(' ');
+                    phrase[0] = "";
+                    phrase[1] = "";
+
+                    foreach (string item in phrase)
+                    {
+                        if (item != "")
+                        {
+                            final = final + item + " ";
+                        }
+                    }
+
+                    if (databaseManager.Select("SELECT * FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) }).Rows.Count > 0)
+                    {
+                        debugWindow.Log("Keyword [" + final + "] has been deleted.");
+                        databaseManager.Insert("DELETE FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) });
+                    }
+                    else
+                    {
+                        debugWindow.Log("Keyword [" + final + "] does not exist in database.");
+                    }
+                }
+                else
+                {
+                    debugWindow.Log("Keyword cannot be blank.");
+                }
+            }
+            else if (m.StartsWith("#alert list"))
+            {
+                queryData = databaseManager.Select("SELECT * FROM NotifyKeywords WHERE 1", null);
+
+                if (queryData.Rows.Count > 0)
+                {
+                    debugWindow.Log("------------- ALERT KEYWORDS -------------");
+                    foreach (DataRow r in queryData.Rows)
+                    {
+                        debugWindow.Log(r["value"].ToString());
+                    }
+                    debugWindow.Log("------------- ALERT KEYWORDS -------------");
+                }
+                else
+                {
+                    debugWindow.Log("No keywords in database.");
+                }
+            }
+            else if (m.StartsWith("#member follow"))
+            {
+                if (m.Split(' ')[2] != "")
+                {
+                    string final = "";
+                    string[] phrase = m.Split(' ');
+                    phrase[0] = "";
+                    phrase[1] = "";
+
+                    foreach (string item in phrase)
+                    {
+                        if (item != "")
+                        {
+                            final = final + item + " ";
+                        }
+                    }
+                    final = final.Trim();
+
+                    if (databaseManager.Select("SELECT * FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) }).Rows.Count > 0)
+                    {
+                        debugWindow.Log("Member [" + final + "] already exists in database.");
+                    }
+                    else
+                    {
+                        debugWindow.Log("Member [" + final + "] has been added.");
+                        databaseManager.Insert("INSERT INTO NotifyUsers(value) VALUES(@memberName)", new SQLiteParameter[] { new SQLiteParameter("memberName", final) });
+                    }
+                }
+                else
+                {
+                    debugWindow.Log("Member cannot be blank.");
+                }
+            }
+            else if (m.StartsWith("#member unfollow"))
+            {
+                if (m.Split(' ')[2] != "")
+                {
+                    string final = "";
+                    string[] phrase = m.Split(' ');
+                    phrase[0] = "";
+                    phrase[1] = "";
+
+                    foreach (string item in phrase)
+                    {
+                        if (item != "")
+                        {
+                            final = final + item + " ";
+                        }
+                    }
+                    final = final.Trim();
+
+                    if (databaseManager.Select("SELECT * FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) }).Rows.Count > 0)
+                    {
+                        debugWindow.Log("Member [" + final + "] has been deleted.");
+                        databaseManager.Insert("DELETE FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) });
+                    }
+                    else
+                    {
+                        debugWindow.Log("Member [" + final + "] does not exist in database.");
+                    }
+                }
+                else
+                {
+                    debugWindow.Log("Keyword cannot be blank.");
+                }
+            }
+            else
+            {
+                debugWindow.Log("Unknown command.");
+            }
+        }
+
+        private async void SendMessage(KeyEventArgs e)
         {
             if (tbMessage.Text != "" && tbMessage.Text.Length < 400)
             {
                 if (tbMessage.Text.StartsWith("#"))
                 {
-                    if (tbMessage.Text.StartsWith("#alert add "))
-                    {
-                        if (tbMessage.Text.Split(' ')[2] != "")
-                        {
-                            string final = "";
-                            string[] phrase = tbMessage.Text.Split(' ');
-                            phrase[0] = "";
-                            phrase[1] = "";
-
-                            foreach (string item in phrase)
-                            {
-                                if (item != "")
-                                {
-                                    final = final + item + " ";
-                                }
-                            }
-                            final = final.Trim();
-
-                            if (databaseManager.Select("SELECT * FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) }).Rows.Count > 0)
-                            {
-                                debugWindow.Log("Keyword [" + final + "] already exists in database.");
-                            }
-                            else
-                            {
-                                debugWindow.Log("Keyword [" + final + "] has been added.");
-                                databaseManager.Insert("INSERT INTO NotifyKeywords(value) VALUES(@keyWord)", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) });
-                            }
-                        }
-                        else
-                        {
-                            debugWindow.Log("Keyword cannot be blank.");
-                        }
-                    }
-                    else if (tbMessage.Text.StartsWith("#alert del"))
-                    {
-                        if (tbMessage.Text.Split(' ')[2] != "")
-                        {
-                            string final = "";
-                            string[] phrase = tbMessage.Text.Split(' ');
-                            phrase[0] = "";
-                            phrase[1] = "";
-
-                            foreach (string item in phrase)
-                            {
-                                if (item != "")
-                                {
-                                    final = final + item + " ";
-                                }
-                            }
-
-                            if (databaseManager.Select("SELECT * FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) }).Rows.Count > 0)
-                            {
-                                debugWindow.Log("Keyword [" + final + "] has been deleted.");
-                                databaseManager.Insert("DELETE FROM NotifyKeywords WHERE value = @keyWord", new SQLiteParameter[] { new SQLiteParameter("keyWord", final) });
-                            }
-                            else
-                            {
-                                debugWindow.Log("Keyword [" + final + "] does not exist in database.");
-                            }
-                        }
-                        else
-                        {
-                            debugWindow.Log("Keyword cannot be blank.");
-                        }
-                    }
-                    else if (tbMessage.Text.StartsWith("#alert list"))
-                    {
-                        queryData = databaseManager.Select("SELECT * FROM NotifyKeywords WHERE 1", null);
-
-                        if (queryData.Rows.Count > 0)
-                        {
-                            debugWindow.Log("------------- ALERT KEYWORDS -------------");
-                            foreach (DataRow r in queryData.Rows)
-                            {
-                                debugWindow.Log(r["value"].ToString());
-                            }
-                            debugWindow.Log("------------- ALERT KEYWORDS -------------");
-                        }
-                        else
-                        {
-                            debugWindow.Log("No keywords in database.");
-                        }
-                    }
-                    else if (tbMessage.Text.StartsWith("#member follow"))
-                    {
-                        if (tbMessage.Text.Split(' ')[2] != "")
-                        {
-                            string final = "";
-                            string[] phrase = tbMessage.Text.Split(' ');
-                            phrase[0] = "";
-                            phrase[1] = "";
-
-                            foreach (string item in phrase)
-                            {
-                                if (item != "")
-                                {
-                                    final = final + item + " ";
-                                }
-                            }
-                            final = final.Trim();
-
-                            if (databaseManager.Select("SELECT * FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) }).Rows.Count > 0)
-                            {
-                                debugWindow.Log("Member [" + final + "] already exists in database.");
-                            }
-                            else
-                            {
-                                debugWindow.Log("Member [" + final + "] has been added.");
-                                databaseManager.Insert("INSERT INTO NotifyUsers(value) VALUES(@memberName)", new SQLiteParameter[] { new SQLiteParameter("memberName", final) });
-                            }
-                        }
-                        else
-                        {
-                            debugWindow.Log("Member cannot be blank.");
-                        }
-                    }
-                    else if (tbMessage.Text.StartsWith("#member unfollow"))
-                    {
-                        if (tbMessage.Text.Split(' ')[2] != "")
-                        {
-                            string final = "";
-                            string[] phrase = tbMessage.Text.Split(' ');
-                            phrase[0] = "";
-                            phrase[1] = "";
-
-                            foreach (string item in phrase)
-                            {
-                                if (item != "")
-                                {
-                                    final = final + item + " ";
-                                }
-                            }
-                            final = final.Trim();
-
-                            if (databaseManager.Select("SELECT * FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) }).Rows.Count > 0)
-                            {
-                                debugWindow.Log("Member [" + final + "] has been deleted.");
-                                databaseManager.Insert("DELETE FROM NotifyUsers WHERE value = @memberName", new SQLiteParameter[] { new SQLiteParameter("memberName", final) });
-                            }
-                            else
-                            {
-                                debugWindow.Log("Member [" + final + "] does not exist in database.");
-                            }
-                        }
-                        else
-                        {
-                            debugWindow.Log("Keyword cannot be blank.");
-                        }
-                    }
-                    else
-                    {
-                        debugWindow.Log("Unknown command.");
-                    }
+                    ParseCommand(tbMessage.Text);
                 }
                 else
                 {
-                    debugWindow.Log(forumConnector.SendMessage(tbMessage.Text, messageColour, false));
+                    debugWindow.Log(await forumConnector.SendMessage(tbMessage.Text, messageColour, false));
                     debugWindow.Log("Message has been sent.");
 
                     GetMessages();
@@ -244,9 +251,9 @@ namespace ShoutboxClient
             }
         }
 
-        private void GetMessages()
+        private async void GetMessages()
         {
-            foreach (FormattedMessage m in forumConnector.GetShoutboxData())
+            foreach (FormattedMessage m in await forumConnector.GetShoutboxData())
             {
                 string mText = Regex.Replace(m.GetMessage(), "<.*?>", String.Empty);
                 mText = HttpUtility.HtmlDecode(mText);
@@ -263,12 +270,8 @@ namespace ShoutboxClient
                     {
                         foreach (DataRow r in queryData.Rows)
                         {
-                            if (mText.ToLower().Contains(r["value"].ToString().ToLower()))
+                            if (mText.ToLower().Contains(r["value"].ToString().ToLower()) || m.IsWhisper())
                             {
-                                // TO-DO: SEND TOAST NOTIFICATIONS
-                                //XenNotification loadNotification = new XenNotification("Shoutbox", m.GetName(), mText);
-                                //loadNotification.Show();
-
                                 lbNotifications.Items.Add(m.GetName() + " has mentioned a word you want alerts for:");
                                 lbNotifications.Items.Add("    Message " + (m.IsWhisper() ? "(PM)" : "") + ": " + mText);
                                 lbNotifications.Items.Add("    Date: " + dtDateTime.ToShortTimeString());
@@ -278,25 +281,27 @@ namespace ShoutboxClient
                         }
                     }
                 }
+                if(!lbMessages.Items.Contains("[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText))
+                {
+                    lbMessages.Items.Add("[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText);
+                    tbMessages.AppendText("\n[" + m.GetID() + "][" + dtDateTime.ToShortTimeString() + "]" + (m.IsWhisper() ? "[PM] " : " ") + m.GetName() + ": " + mText);
+                    debugWindow.Log("Added message: " + lastMessageId.ToString());
 
+                    tbMessages.ScrollToEnd();
+                }
                 lastMessageId = m.GetID();
-                debugWindow.Log("Added message: " + lastMessageId.ToString());
-                lbMessages.Items.Add("[" + dtDateTime.ToShortTimeString() + "] " + m.GetName() + ": " + mText);
             }
 
             debugWindow.Log("Done, last message ID is " + lastMessageId.ToString());
             lastMessageId = forumConnector.GetLastMessageID();
 
-            // TO-DO: FIX THIS THING WHICH SCROLLS CHAT TO BOTTOM ON NEW MESSAGE
-            //int visibleItems = lbMessages.ClientSize.Height / lbMessages.ItemHeight;
-            //lbMessages.TopIndex = Math.Max(lbMessages.Items.Count - visibleItems + 1, 0);
+            lbMessages.ScrollIntoView(lbMessages.Items[lbMessages.Items.Count - 1]);
         }
 
         private void GetMembers()
         {
             lbFollowed.Items.Clear();
             lbUsers.Items.Clear();
-            lbUsers.Items.Add("Total: " + forumConnector.GetUsers().Count);
 
             foreach (string u in forumConnector.GetUsers())
             {
@@ -347,6 +352,12 @@ namespace ShoutboxClient
         private void Rectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        private void bMinimise_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+            debugWindow.WindowState = WindowState.Minimized;
         }
     }
 }
